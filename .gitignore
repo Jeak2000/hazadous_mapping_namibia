@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# QGIS
+*.qgz~
+*.qgs~
+
+# OS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+
+# Large GIS / raster data
+*.tif
+*.tiff
+*.img
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+
+# Environment / credentials
+.env
