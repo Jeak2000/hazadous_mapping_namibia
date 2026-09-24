@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-09-23T11:42:22.761125",
+  "notebook": "02_Preprocessing_Reprojection",
+  "purpose": "Reproject WGS 84 DEM to UTM 33S with exact 30 m grid enforcement",
+  "parameters": {
+    "target_crs": "EPSG:32733",
+    "target_pixel_size": "30 m",
+    "resampling_method": "Resampling.cubic",
+    "nodata_value": -9999
+  },
+  "source_metadata": {
+    "windhoek": {
+      "filename": "copernicus_DEM_Namibia_small_WDH.tif",
+      "crs": "GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST]]",
+      "dimensions": "644 x 394 px",
+      "elevation_range": "1474.18 - 2053.15 m",
+      "mean_elevation": "1633.72 m",
+      "nodata_percent": "2.83%"
+    },
+    "oshakati": {
+      "filename": "copernicus_DEM_Namibia_small_OSH.tif",
+      "crs": "GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST]]",
+      "dimensions": "296 x 248 px",
+      "elevation_range": "1087.50 - 1105.44 m",
+      "mean_elevation": "1094.36 m",
+      "nodata_percent": "0.73%"
+    }
+  },
+  "reprojection_results": {
+    "windhoek": {
+      "src_crs": "GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST]]",
+      "dst_crs": "EPSG:32733",
+      "src_shape": [
+        394,
+        644
+      ],
+      "dst_shape": [
+        401,
+        601
+      ],
+      "ul_corner": [
+        700758.1292768269,
+        7514625.272632087
+      ],
+      "pixel_size": 30,
+      "transform": [
+        30.0,
+        0.0,
+        700758.1292768269,
+        0.0,
+        -29.930882846179447,
+        7514625.272632087,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "oshakati": {
+      "src_crs": "GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST]]",
+      "dst_crs": "EPSG:32733",
+      "src_shape": [
+        248,
+        296
+      ],
+      "dst_shape": [
+        248,
+        283
+      ],
+      "ul_corner": [
+        567469.1553435952,
+        8038850.60744339
+      ],
+      "pixel_size": 30,
+      "transform": [
+        30.0,
+        0.0,
+        567469.1553435952,
+        0.0,
+        -29.939713976999386,
+        8038850.60744339,
+        0.0,
+        0.0,
+        1.0
+      ]
+    }
+  },
+  "nodata_handling": {
+    "windhoek": {
+      "nan_count_before": 10014,
+      "nodata_count_after": 10014,
+      "nodata_percent": 4.155169480624561,
+      "valid_count": 230987,
+      "dtype": "float32"
+    },
+    "oshakati": {
+      "nan_count_before": 1423,
+      "nodata_count_after": 1423,
+      "nodata_percent": 2.0275276416277213,
+      "valid_count": 68761,
+      "dtype": "float32"
+    }
+  },
+  "qa_results": {
+    "windhoek": {
+      "all_pass": "False",
+      "checks": {
+        "extent_valid": "True",
+        "stats_valid": "True",
+        "nodata_check": "True",
+        "crs_valid": "True",
+        "slope_check": "False",
+        "visual_check": "True"
+      }
+    },
+    "oshakati": {
+      "all_pass": "True",
+      "checks": {
+        "extent_valid": "True",
+        "stats_valid": "True",
+        "nodata_check": "True",
+        "crs_valid": "True",
+        "slope_check": "True",
+        "visual_check": "True"
+      }
+    }
+  },
+  "output_files": {
+    "windhoek": "/Users/jacobsmacbookpro/Namibia_python/data/processed/windhoek_utm33s_validated.tif",
+    "oshakati": "/Users/jacobsmacbookpro/Namibia_python/data/processed/oshakati_utm33s_validated.tif"
+  }
+}

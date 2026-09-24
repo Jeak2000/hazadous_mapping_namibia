@@ -161,7 +161,7 @@ The exact division between Python, ArcPy and other tools may change.
 
 ---
 
-# 6. Hazardous-area analysis
+# 7. Hazardous-area analysis
 
 ## 6.1 Definition
 
@@ -224,7 +224,239 @@ The AI should help determine which processing steps are scientifically justified
 
 ---
 
-# 7. DSM vs DTM — important open methodological question
+# 8. Updated hydrological hazard methodology
+
+The hydrological analysis has now been refined into two distinct flood-related mechanisms that should be considered separately:
+
+1. **Accumulation hazard** — areas where surface water can accumulate because of local topographic depressions/basins.
+2. **Flow-path hazard** — areas where surface runoff can become concentrated and move downslope along defined flow paths/drainage lines.
+
+The purpose is **not** to build a full hydraulic flood model with precise water depths, velocities or discharge hydrographs. Instead, the project should produce a transparent **DEM-based screening of potential flood-prone areas** that is appropriate for a 20 ECTS MSc project.
+
+## 7.1 Accumulation hazard
+
+Accumulation hazard should identify areas where water is likely to collect because of terrain.
+
+A conceptual workflow is:
+
+```text
+DEM / DSM
+   ↓
+Preprocessing / hydrological conditioning
+   ↓
+Flow direction
+   ↓
+Topographic depressions / basins
+   ↓
+Depression characteristics
+   ↓
+Potential accumulation areas
+```
+
+Relevant indicators may include:
+- local elevation;
+- depression/basin location;
+- depression depth;
+- contributing/upstream area;
+- flow accumulation;
+- potentially the relationship between depressions and surrounding settlement development.
+
+The analysis should distinguish between simply identifying low-lying terrain and identifying **topographic locations where runoff can actually accumulate**.
+
+If rainfall is used to contextualize the magnitude of a scenario, a simplified potential runoff-volume relationship can be used:
+
+\[
+V = P \times A \times C
+\]
+
+where:
+- \(V\) = potential runoff volume;
+- \(P\) = design rainfall depth;
+- \(A\) = contributing catchment area;
+- \(C\) = runoff coefficient.
+
+This should be interpreted as **potential runoff contribution**, not as a prediction of actual stored floodwater volume or flood depth.
+
+## 7.2 Flow-path hazard
+
+Flow-path hazard should identify locations where surface runoff becomes concentrated and moves downslope.
+
+The core workflow is:
+
+```text
+DEM / DSM
+   ↓
+Preprocessing / hydrological conditioning
+   ↓
+Flow direction
+   ↓
+Flow accumulation
+   ↓
+Convert accumulation to upstream contributing area
+   ↓
+Extract significant flow paths
+   ↓
+Calculate flow-path characteristics
+```
+
+The principal indicator should be **upstream contributing area**.
+
+The reasoning is:
+
+> The larger the upstream contributing area, the larger the area from which rainfall can potentially be concentrated into a given flow path. Therefore, upstream contributing area can be used as an indicator of the potential magnitude of concentrated surface runoff.
+
+For a raster with cell size \(r\):
+
+\[
+A_{upstream} = N_{cells} \times r^2
+\]
+
+For example, for a 30 m DEM/DSM:
+- one cell = \(30 \times 30 = 900\) m²;
+- 1,000 contributing cells = 900,000 m² = 0.9 km².
+
+The project should **not automatically convert flow accumulation into discharge (m³/s)**. A DEM alone does not provide sufficient information for a defensible discharge calculation. Exact discharge would require additional assumptions/data such as rainfall intensity and duration, runoff characteristics, catchment response, channel geometry and other hydrological parameters.
+
+## 7.3 Identifying significant/risky flow paths
+
+The project needs a transparent method for deciding which flow paths are sufficiently significant to be included in the hazard analysis.
+
+The preferred starting point is to use a **minimum upstream contributing-area threshold**.
+
+Rather than selecting one arbitrary threshold immediately, the project should perform a **sensitivity analysis** using several candidate thresholds. For example, thresholds such as:
+
+- 0.05 km²
+- 0.10 km²
+- 0.50 km²
+- 1.00 km²
+- 2.00 km²
+
+may be tested as methodological examples.
+
+These values are **not predefined final thresholds**. The final threshold should be selected based on:
+- the spatial scale of the study;
+- the resulting drainage-network density;
+- visual/field plausibility;
+- comparison with known drainage features where available;
+- sensitivity of the final settlement-exposure results;
+- methodological literature or established hydrological practice where applicable.
+
+The basic relationship is:
+
+> **Higher contributing-area threshold → fewer and larger flow paths.**
+>
+> **Lower contributing-area threshold → more and smaller flow paths.**
+
+The selected threshold should therefore be justified rather than treated as a universal physical boundary between "safe" and "risky" flow paths.
+
+## 7.4 Flow-path characteristics
+
+For each extracted significant flow path, the project can calculate a small set of interpretable characteristics:
+
+| Variable | Purpose |
+|---|---|
+| Flow Path ID | Identification of individual flow paths |
+| Upstream contributing area (km²) | Primary indicator of potential runoff concentration |
+| Flow-path length | Describes the spatial extent of the path |
+| Mean/maximum slope | Indicates terrain steepness along the path |
+| Settlement intersection/proximity | Indicates potential exposure |
+
+The project should initially keep **upstream contributing area as the primary flow-path indicator**. Slope and other variables can be added if they improve the analysis and can be justified.
+
+## 7.5 Optional 100-year rainfall scenario
+
+A **100-year design rainfall event** may be used as a scenario for interpreting the potential runoff generated by the identified catchments.
+
+This should be clearly distinguished from claiming that the model predicts a "100-year flood".
+
+The intended terminology should be along the lines of:
+
+- **potential surface runoff under a 100-year design rainfall scenario**;
+- **relative flow concentration under a 100-year rainfall scenario**;
+- **potential flood hazard under a 100-year rainfall scenario**.
+
+Avoid presenting the DEM-derived result as:
+- a precise 100-year flood depth;
+- a precise 100-year inundation boundary;
+- a precise flood discharge;
+- a hydraulic simulation.
+
+If a 100-year rainfall depth is incorporated, the source, temporal duration and spatial applicability of that rainfall value must be explicitly documented. If suitable rainfall data cannot be obtained at an appropriate scale, the terrain/hydrological analysis can still stand on its own as a susceptibility/hazard-screening method.
+
+## 7.6 Combined hazard concept
+
+The two mechanisms should ultimately contribute to one interpretable hazardous-area analysis:
+
+```text
+                    DEM / DSM
+                        ↓
+              Hydrological conditioning
+                        ↓
+             ┌──────────┴──────────┐
+             ↓                     ↓
+       Flow direction         Flow accumulation
+             ↓                     ↓
+     Local depressions      Upstream contributing area
+             ↓                     ↓
+   ACCUMULATION HAZARD       FLOW-PATH HAZARD
+             └──────────┬──────────┘
+                        ↓
+             Potentially hazardous
+                  flood areas
+                        ↓
+             Informal settlement
+                 development
+                        ↓
+             Exposure analysis
+```
+
+The combined output should remain transparent. The project should be able to explain **why a given location is classified as potentially hazardous**, rather than relying on an opaque composite score.
+
+## 7.7 Relation to settlement development
+
+The hydrological hazard layer is only one part of the final research question.
+
+The central spatial relationship remains:
+
+```text
+Potential flood hazard
+        +
+Informal settlement development
+        =
+Settlement development into potentially hazardous areas
+```
+
+The analysis should therefore examine, where data allows:
+- existing informal settlement structures in relation to flow paths;
+- new settlement/building development in relation to flow paths;
+- structures located in accumulation areas;
+- the amount/extent of settlement affected;
+- differences between Windhoek and Oshakati.
+
+Potential exposure indicators may include:
+- number of buildings/shacks within a defined distance of significant flow paths;
+- built-up area intersecting accumulation zones;
+- settlement area within potentially hazardous areas;
+- length/extent of significant flow paths passing through settlement areas.
+
+The exact exposure metric remains dependent on the final building/shack dataset.
+
+## 7.8 Methodological scope
+
+This approach deliberately avoids turning the project into a full rainfall-runoff or hydraulic modelling study.
+
+The model is intended to answer:
+
+> **Where does the terrain indicate that surface water is likely to accumulate or become concentrated, and are informal settlements developing in these potentially hazardous locations?**
+
+It is **not** intended to answer:
+
+> How deep will the water be at every building during a specific storm, what will the flow velocity be, or what exact discharge will pass through each drainage channel?
+
+This distinction should remain explicit throughout the methodology, results and discussion.
+
+
+# 8. DSM vs DTM — important open methodological question
 
 The project team is specifically considering the use of a **Digital Surface Model (DSM)** rather than automatically assuming that a bare-earth Digital Terrain Model (DTM) is preferable.
 
@@ -257,7 +489,7 @@ If feasible, a DSM/DTM comparison could be used as a methodological sensitivity 
 
 ---
 
-# 8. Current elevation-data candidates
+# 9. Current elevation-data candidates
 
 The following datasets have been identified in Google Earth Engine.
 
@@ -331,7 +563,7 @@ Potential use:
 
 ---
 
-# 9. Satellite imagery and building analysis
+# 10. Satellite imagery and building analysis
 
 A second major analytical component is a **building/shack-development study**.
 
@@ -421,21 +653,28 @@ Do not recommend expensive commercial imagery without considering whether it is 
 
 ---
 
-# 10. Rainfall data
+# 12. Rainfall data and design-event scenarios
 
-At present:
+Rainfall is **not intended to become a major rainfall-runoff modelling component** of the project.
 
-> **Rainfall data is NOT planned as a major component of the spatial analysis.**
+However, the updated hydrological method allows rainfall to be used in a limited and clearly defined way, particularly if a suitable **100-year design rainfall scenario** can be sourced.
 
-The project has limited time and resources and does not want to spend a large part of the project on rainfall modelling.
+Potential use:
+- contextualize the potential magnitude of runoff;
+- calculate potential runoff volume using \(V=P 	imes A 	imes C\);
+- support interpretation of the flow-path/accumulation hazard under a design-event scenario.
 
-Possible datasets such as CHIRPS or GPM may be useful for contextual/background purposes if needed, but they should not automatically be incorporated into the core model.
+Rainfall should **not** automatically be used to build a full hydrological or hydraulic model.
+
+Possible datasets such as CHIRPS or GPM may be useful for contextual/background purposes, but their spatial and temporal characteristics must be assessed before use. A design rainfall value must have a documented source, duration and spatial applicability.
+
+If an appropriate 100-year rainfall value cannot be obtained, the terrain/hydrological hazard analysis remains valid as a susceptibility/screening approach.
 
 Do not expand the project into a major precipitation/extreme-event analysis unless explicitly requested.
 
 ---
 
-# 11. Fieldwork
+# 12. Fieldwork
 
 Fieldwork is important, but it has a specific role.
 
@@ -461,7 +700,7 @@ The AI should not assume that field observations are quantitative training data 
 
 ---
 
-# 12. Wider academic perspective
+# 13. Wider academic perspective
 
 The spatial analysis is only one part of the project.
 
@@ -493,7 +732,7 @@ The project should therefore aim for a result that is **useful to planners, NGOs
 
 ---
 
-# 13. Important conceptual distinction: hazard, exposure and risk
+# 14. Important conceptual distinction: hazard, exposure and risk
 
 Use terminology carefully.
 
@@ -527,7 +766,7 @@ Prefer terms such as:
 
 ---
 
-# 14. Data philosophy
+# 15. Data philosophy
 
 The project should prefer:
 1. Open/free data where possible.
@@ -556,7 +795,7 @@ Do not choose a dataset solely because it has the highest nominal resolution.
 
 ---
 
-# 15. GEE strategy
+# 16. GEE strategy
 
 The current intention is to use **Google Earth Engine primarily for data acquisition**.
 
@@ -581,7 +820,7 @@ The team has access to a comparatively large GEE student compute allowance, but 
 
 ---
 
-# 16. Python strategy
+# 17. Python strategy
 
 Python is the current preferred environment for the hydrological analysis.
 
@@ -616,7 +855,7 @@ Prefer well-supported, transparent tools and explain important methodological ch
 
 ---
 
-# 17. ArcGIS / ArcPy strategy
+# 18. ArcGIS / ArcPy strategy
 
 ArcGIS Pro / ArcPy is currently considered particularly useful for:
 - building/shack detection workflows;
@@ -639,7 +878,7 @@ Do not assume that a tool designed for conventional building footprints will aut
 
 ---
 
-# 18. QGIS strategy
+# 19. QGIS strategy
 
 QGIS is currently intended primarily for:
 - final map design;
@@ -652,7 +891,7 @@ It may also be used for exploratory GIS work and quality control.
 
 ---
 
-# 19. Coding-agent behaviour
+# 20. Coding-agent behaviour
 
 The AI assistant should behave as a **technical research assistant**, not merely as a code generator.
 
@@ -688,7 +927,7 @@ The AI should **not blindly implement the request** if there is a clear methodol
 
 ---
 
-# 20. Coding principles
+# 21. Coding principles
 
 When providing code:
 
@@ -727,7 +966,7 @@ For raster workflows, always think about:
 
 ---
 
-# 21. Spatial scale is critical
+# 22. Spatial scale is critical
 
 The project operates across multiple spatial scales.
 
@@ -757,7 +996,7 @@ The AI should always match claims to the spatial resolution of the data.
 
 ---
 
-# 22. Temporal analysis
+# 23. Temporal analysis
 
 A major interest is **development over time**.
 
@@ -775,7 +1014,7 @@ Do not assume that a theoretically ideal time series exists.
 
 ---
 
-# 23. Expected outputs
+# 24. Expected outputs
 
 The final project is expected to produce:
 
@@ -819,7 +1058,7 @@ The project should use the spatial findings to discuss:
 
 ---
 
-# 24. Limitations to keep visible
+# 25. Limitations to keep visible
 
 The following are expected methodological limitations and should not be hidden:
 
@@ -836,7 +1075,7 @@ The following are expected methodological limitations and should not be hidden:
 
 ---
 
-# 25. What the AI should NOT assume
+# 26. What the AI should NOT assume
 
 Do **not** assume that:
 
@@ -857,7 +1096,7 @@ Do **not** assume that:
 
 ---
 
-# 26. Current confirmed decisions vs. open questions
+# 27. Current confirmed decisions vs. open questions
 
 ## CONFIRMED
 
@@ -873,7 +1112,11 @@ Do **not** assume that:
 - ArcGIS/ArcPy is intended to support building/shack analysis.
 - QGIS is intended for final cartographic design.
 - Fieldwork supports and validates interpretation rather than serving as a core spatial-model input.
-- Rainfall data is currently not intended as a major analytical component.
+- Rainfall data is not intended as a major rainfall-runoff modelling component, but a 100-year design rainfall scenario may be used for limited interpretation if suitable data are available.
+- The hydrological hazard analysis distinguishes **accumulation hazard** from **flow-path hazard**.
+- Flow-path hazard uses **upstream contributing area** as the primary indicator of potential flow concentration.
+- Significant flow paths should be selected using a justified contributing-area threshold, supported by sensitivity analysis rather than an arbitrary single value.
+- A full hydraulic model with precise discharge, water depth or velocity is outside the current scope.
 - Both individual shack detection and building-mass analysis remain open.
 
 ## CURRENT CANDIDATES
@@ -900,10 +1143,14 @@ Do **not** assume that:
 9. What temporal period provides the best balance between data availability and research value?
 10. What validation can realistically be performed with field observations?
 11. How can the final results be expressed without overstating their precision?
+12. What contributing-area threshold gives a defensible definition of significant flow paths?
+13. How sensitive are the settlement-exposure results to the selected flow-path threshold?
+14. Can a suitable 100-year design rainfall value be obtained for the study areas, and at what duration/spatial scale?
+15. Should a 100-year rainfall scenario be used only for interpretation, or also for potential runoff-volume estimates?
 
 ---
 
-# 27. Recommended decision-making hierarchy
+# 28. Recommended decision-making hierarchy
 
 When helping with the project, prioritize decisions in this order:
 
@@ -929,7 +1176,7 @@ Write the code
 
 ---
 
-# 28. Useful terminology
+# 29. Useful terminology
 
 Use these terms consistently:
 
@@ -953,7 +1200,7 @@ Avoid using **"slum areas"** as the default project terminology. Prefer **"urban
 
 ---
 
-# 29. Project philosophy
+# 30. Project philosophy
 
 The project should answer a relatively simple spatial question well:
 
@@ -975,7 +1222,7 @@ The objective is to produce a **credible, useful and understandable spatial anal
 
 ---
 
-# 30. Source context
+# 31. Source context
 
 The original MSc project proposal described the project as an investigation of climate change and extreme rainfall in urban informal settlements in Namibia. It proposed spatial analysis including overlay analysis, terrain/slope analysis, precipitation remote sensing, and field surveying, alongside qualitative fieldwork/interviews. It also identified urban resilience, wicked problems, nature-based solutions, urban green infrastructure, participatory planning and land administration as relevant perspectives.
 
@@ -985,7 +1232,7 @@ The original project timetable states that the Namibia stay and project writing 
 
 ---
 
-# 31. Final instruction to the AI agent
+# 32. Final instruction to the AI agent
 
 When assisting with this project:
 
@@ -1009,3 +1256,14 @@ When writing code:
 When a data limitation is discovered, **do not force the original method**. Instead, explain how the research question can be answered with the available data.
 
 The project should remain scientifically credible while being realistic about the resources, data and time available to two MSc students.
+
+### Current hydrological end-goal
+
+The intended hydrological end-goal is a **transparent, DEM-based flood-hazard screening** that identifies two complementary mechanisms:
+
+1. **Accumulation hazard:** local depressions/basins where runoff may accumulate.
+2. **Flow-path hazard:** concentrated downslope runoff represented primarily by upstream contributing area.
+
+These outputs should be combined with informal-settlement development data to identify **where settlement expansion is occurring in potentially hazardous locations**.
+
+A 100-year design rainfall event may be used as a scenario where appropriate data are available, but the project should not be presented as a full hydraulic flood simulation. The final method should remain interpretable, reproducible and defensible at the spatial resolution of the available elevation data.

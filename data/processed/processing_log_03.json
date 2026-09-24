@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-09-24T12:33:40.906329",
+  "notebook": "03_Terrain_Derivatives_Hydrological_Analysis",
+  "purpose": "Compute terrain derivatives (slope, aspect, D8 flow) and classify flow accumulation thresholds",
+  "parameters": {
+    "target_crs": "EPSG:32733",
+    "target_pixel_size": "30 m",
+    "nodata_value": -9999,
+    "flow_thresholds_cells": [
+      50,
+      200,
+      500
+    ],
+    "slope_method": "numpy.gradient (degrees)",
+    "aspect_method": "numpy.gradient (0-360\u00b0) + 8-point cardinal conversion",
+    "flow_analysis": "Whitebox D8 flow direction + accumulation (no depression filling)"
+  },
+  "input_dtm_metadata": {
+    "windhoek": {
+      "filename": "windhoek_utm33s_validated_60m.tif",
+      "crs": "PROJCS[\"WGS 84 / UTM zone 33S\",GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",15],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",10000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+      "dimensions": "300 x 200 px",
+      "elevation_range": "-9842.77 - 2036.22 m",
+      "mean_elevation": "1342.92 m",
+      "nodata_percent": "2.07%"
+    },
+    "oshakati": {
+      "filename": "oshakati_utm33s_validated_60m.tif",
+      "crs": "PROJCS[\"WGS 84 / UTM zone 33S\",GEOGCS[\"WGS 84\",DATUM[\"World Geodetic System 1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",15],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",10000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]",
+      "dimensions": "141 x 124 px",
+      "elevation_range": "-9800.96 - 1099.14 m",
+      "mean_elevation": "968.52 m",
+      "nodata_percent": "0.89%"
+    }
+  },
+  "slope_derivatives": {
+    "windhoek": {
+      "min_deg": 0.0,
+      "max_deg": 89.99241638183594,
+      "mean_deg": 75.44355773925781,
+      "std_deg": 14.693503379821777,
+      "percentile_95": 88.33358764648438
+    },
+    "oshakati": {
+      "min_deg": 0.0,
+      "max_deg": 89.99323272705078,
+      "mean_deg": 22.240646362304688,
+      "std_deg": 20.37517738342285,
+      "percentile_95": 89.16616821289062
+    }
+  },
+  "flow_accumulation_statistics": {
+    "windhoek": {
+      "min_cells": 1.0,
+      "max_cells": 28.0,
+      "mean_cells": 1.9450666904449463,
+      "std_cells": 2.0335230827331543,
+      "percentile_95": 6.0
+    },
+    "oshakati": {
+      "min_cells": 1.0,
+      "max_cells": 32.0,
+      "mean_cells": 2.023392915725708,
+      "std_cells": 2.316145181655884,
+      "percentile_95": 7.0
+    }
+  },
+  "threshold_classifications": {
+    "windhoek": {
+      "50": {
+        "output_file": "/Users/jacobsmacbookpro/Namibia_python/data/processed/windhoek_flowaccum_threshold_50cells.tif",
+        "cells_above_threshold": 0,
+        "percent_above": 0.0
+      },
+      "200": {
+        "output_file": "/Users/jacobsmacbookpro/Namibia_python/data/processed/windhoek_flowaccum_threshold_200cells.tif",
+        "cells_above_threshold": 0,
+        "percent_above": 0.0
+      },
+      "500": {
+        "output_file": "/Users/jacobsmacbookpro/Namibia_python/data/processed/windhoek_flowaccum_threshold_500cells.tif",
+        "cells_above_threshold": 0,
+        "percent_above": 0.0
+      }
+    },
+    "oshakati": {
+      "50": {
+        "output_file": "/Users/jacobsmacbookpro/Namibia_python/data/processed/oshakati_flowaccum_threshold_50cells.tif",
+        "cells_above_threshold": 0,
+        "percent_above": 0.0
+      },
+      "200": {
+        "output_file": "/Users/jacobsmacbookpro/Namibia_python/data/processed/oshakati_flowaccum_threshold_200cells.tif",
+        "cells_above_threshold": 0,
+        "percent_above": 0.0
+      },
+      "500": {
+        "output_file": "/Users/jacobsmacbookpro/Namibia_python/data/processed/oshakati_flowaccum_threshold_500cells.tif",
+        "cells_above_threshold": 0,
+        "percent_above": 0.0
+      }
+    }
+  },
+  "diagnostic_plots": {
+    "slope_maps": "results/figures/03_slope_maps.png",
+    "aspect_cardinal_directions": "results/figures/03_aspect_cardinal_directions.png",
+    "flow_accumulation_heatmaps": "results/figures/03_flow_accumulation_heatmaps.png",
+    "threshold_comparisons_windhoek": "results/figures/03_threshold_comparison_windhoek.png",
+    "threshold_comparisons_oshakati": "results/figures/03_threshold_comparison_oshakati.png"
+  }
+}

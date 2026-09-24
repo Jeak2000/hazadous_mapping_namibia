@@ -1,0 +1,144 @@
+// ============================================
+// LOAD STUDY AREAS
+// ============================================
+
+var studyArea = ee.FeatureCollection(
+  'projects/flood-hazard-in-namibia/assets/boundry_cuvelai'
+);
+
+
+
+// ============================================
+// 2. LOAD SENTINEL-2 IMAGERY
+// ============================================
+
+var images = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+  .filterBounds(studyArea)
+  .filterDate('2026-01-01', '2026-08-31')
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20));
+
+
+// ============================================
+// 3. CREATE ONE IMAGE
+// ============================================
+
+var image = images.median();
+
+
+// ============================================
+// 4. DISPLAY SATELLITE IMAGE
+// ============================================
+
+var visualization = {
+  bands: ['B4', 'B3', 'B2'],
+  min: 0,
+  max: 3000
+};
+
+Map.addLayer(
+  image,
+  visualization,
+  'Sentinel-2'
+);
+
+
+// ============================================
+// 5. DISPLAY STUDY AREA
+// ============================================
+
+Map.addLayer(
+  studyArea,
+  {color: 'red'},
+  'Study area'
+);
+
+
+// ============================================
+// 6. ZOOM TO STUDY AREA
+// ============================================
+
+Map.centerObject(studyArea, 8);
+
+// ============================================
+// 7. LOAD DEM
+// ============================================
+
+// Reduced the collection to a single image using .mean() and renamed to 'dem'
+// Added .select('DEM') to ensure it is a single-band image for visualization
+var dem = ee.ImageCollection('COPERNICUS/DEM/GLO30').select('DEM').mean();
+
+// ============================================
+// 8. CLIP DEM TO STUDY AREA
+// ============================================
+
+var demClipped = dem.clip(studyArea);
+
+
+// ============================================
+// 9. DISPLAY DEM
+// ============================================
+
+var demVisualization = {
+  min: 900,
+  max: 2000
+};
+
+Map.addLayer(
+  demClipped,
+  demVisualization,
+  'DEM'
+);
+
+
+
+// ============================================
+// 11. DISPLAY DEM
+// ============================================
+
+var demVisualization = {
+
+  min: 900,
+
+  max: 2000,
+
+  palette: [
+
+    'blue',
+
+    'cyan',
+
+    'green',
+
+    'yellow',
+
+    'orange',
+
+    'red'
+
+  ]
+
+};
+
+Map.addLayer(
+
+  demClipped,
+
+  demVisualization,
+
+  'Copernicus DEM GLO-30'
+
+);
+
+
+// ============================================
+// 12. EXPORT DEM TO DRIVE
+// ============================================
+
+Export.image.toDrive({
+  image: demClipped,
+  description: 'Copernicus_DEM_Namibia_cuvelai',
+  scale: 30,
+  region: studyArea.geometry(),
+  fileFormat: 'GeoTIFF',
+  maxPixels: 1e13
+});
